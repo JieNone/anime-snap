@@ -1,4 +1,4 @@
-package ru.tyurin.animesnap.data.network
+package ru.tyurin.animesnap.data.models
 
 
 import kotlinx.serialization.SerialName
