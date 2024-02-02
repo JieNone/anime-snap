@@ -12,20 +12,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
-import ru.tyurin.animesnap.data.network.AnimeTitle
-import ru.tyurin.animesnap.data.network.Result
+import ru.tyurin.animesnap.data.models.AnimeTitle
+import ru.tyurin.animesnap.data.models.Result
 import ru.tyurin.animesnap.data.utils.DoubleToPercentage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 
@@ -62,6 +66,7 @@ fun HomeScreen(
     uiState: TitleViewModel.AnimeUiState,
     modifier: Modifier = Modifier,
     retryAction: () -> Unit,
+
 ) {
     when (uiState) {
         is TitleViewModel.AnimeUiState.Success ->
@@ -82,7 +87,9 @@ fun AnimeTitleCard(results: List<Result>, modifier: Modifier = Modifier) {
         results.forEach { result ->
             Text(
                 text = result.filename,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 18.sp,
+
             )
             DoubleToPercentage(number = result.similarity)
             AsyncImage(
@@ -91,6 +98,7 @@ fun AnimeTitleCard(results: List<Result>, modifier: Modifier = Modifier) {
                     .crossfade(true)
                     .build(),
                 contentDescription = stringResource(R.string.title_photo),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth(),
                 error = painterResource(id = R.drawable.ic_broken_image),
                 placeholder = painterResource(id = R.drawable.loading_img)
@@ -116,9 +124,7 @@ fun TitlesGridScreen(
         }
     }
 }
-/**
- * ResultScreen displaying number of photos retrieved.
- */
+
 @Composable
 fun ResultScreen(photos: String, modifier: Modifier = Modifier) {
     Box(

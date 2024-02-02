@@ -15,14 +15,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.ui.screens.HomeScreen
+import ru.tyurin.animesnap.ui.screens.SearchScreen
 import ru.tyurin.animesnap.ui.screens.TitleViewModel
+
+
+@Composable
+fun NavController() {
+    val navController = rememberNavController()
+    val titleViewModel: TitleViewModel = viewModel(factory = TitleViewModel.Factory)
+
+
+    NavHost(navController = navController, startDestination = "anime_title_app") {
+        composable("anime_title_app") { 
+            AnimeTitleApp(
+                onNavigateToHomeScreen = { navController.navigate("home_screen") },
+                titleViewModel
+            )
+        }
+        composable("home_screen")
+        { HomeScreen(uiState = titleViewModel.uiState, retryAction = titleViewModel::getTitleByUrl) }
+
+    }
+
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimeTitleApp() {
+fun AnimeTitleApp(
+    onNavigateToHomeScreen: () -> Unit,
+    titleViewModel: TitleViewModel
+
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -33,11 +62,7 @@ fun AnimeTitleApp() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            val titleViewModel: TitleViewModel = viewModel(factory = TitleViewModel.Factory)
-            HomeScreen(
-                uiState = titleViewModel.uiState,
-                retryAction = titleViewModel::getTitleByUrl
-            )
+            SearchScreen(onNavigateToHomeScreen = onNavigateToHomeScreen, titleViewModel = titleViewModel)
         }
     }
 }
