@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Anime Snap</string>
+    <string name="placeholder_result">Placeholder result text</string>
+    <string name="loading_failed">Failed to load</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading</string>
+    <string name="title_photo">Possible title image</string>
+    <string name="blank_url">https://img3.aksam.com.tr/imgsdisk/2020/12/14/t25_something-went-wrong-ne-d-411.jpg</string>
 </resources>
