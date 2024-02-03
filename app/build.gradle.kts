@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlinx-serialization")
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -87,5 +88,6 @@ dependencies {
     androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
     // Jetpack Compose Integration
     implementation("androidx.navigation:navigation-compose:$navVersion")
-
+    implementation ("com.google.dagger:dagger:2.48.1")
+    kapt ("com.google.dagger:dagger-compiler:2.48.1")
 }
