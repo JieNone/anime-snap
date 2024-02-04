@@ -9,11 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.tyurin.animesnap.data.models.AnimeTitle
 import ru.tyurin.animesnap.data.repository.AnimeTitleRepository
+import ru.tyurin.animesnap.data.utils.SharedPreferencesKeys
 import java.io.IOException
 import javax.inject.Inject
 
@@ -27,8 +26,8 @@ class TitleViewModel : ViewModel() {
 
     private var titleJob : Job? = null
 
-    val url = MutableLiveData<TextFieldValue>()
-    fun getUrl() = url.value
+    private val url = MutableLiveData<TextFieldValue>()
+    private fun getUrl() = url.value
     fun updateUrl(newUrl: TextFieldValue) {
         url.value = newUrl
     }
@@ -41,7 +40,7 @@ class TitleViewModel : ViewModel() {
         titleJob?.cancel()
         titleJob = viewModelScope.launch {
 
-            val fakeUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.fortressofsolitude.co.za%2Fwp-content%2Fuploads%2F2021%2F06%2F5-Most-Popular-Anime-Characters-of-All-Time.jpg&f=1&nofb=1&ipt=3f8bda4ba5920ca7963c49ed4b302d87062662f2391a1e7ea59832fa222925e8&ipo=images"
+            val fakeUrl = SharedPreferencesKeys.FAKE_IMG_URL
             uiState = AnimeUiState.Loading
             uiState = try {
                 AnimeUiState.Success(

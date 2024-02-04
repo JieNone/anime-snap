@@ -1,6 +1,5 @@
 package ru.tyurin.animesnap.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,12 +12,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.tyurin.animesnap.R
 
 @Composable
-fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> Unit,) {
+fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> Unit) {
     val urlState = remember { mutableStateOf(TextFieldValue()) }
 
     Column(
@@ -26,7 +27,7 @@ fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> U
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Поиск по URL",
+            text = stringResource(R.string.search_by_url),
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 24.sp,
             modifier = Modifier.padding(vertical = 20.dp)
@@ -35,7 +36,7 @@ fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> U
         OutlinedTextField(
             value = urlState.value,
             onValueChange = { urlState.value = it },
-            placeholder = { Text("Введите URL") },
+            placeholder = { Text(stringResource(R.string.enter_the_url)) },
             modifier = Modifier.padding(horizontal = 20.dp),
             singleLine = true
         )
@@ -43,8 +44,8 @@ fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> U
 
         Button(
             onClick = {
-                val adress = urlState.value
-                if (adress.text.isNotBlank()) {
+                val destination = urlState.value
+                if (destination.text.isNotBlank()) {
                     titleViewModel.updateUrl(urlState.value)
                     titleViewModel.getTitleByUrl()
                     onNavigateToHomeScreen()
@@ -53,7 +54,7 @@ fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> U
             },
             modifier = Modifier.padding(vertical = 20.dp)
         ) {
-            Text("Искать!")
+            Text(stringResource(R.string.find_this))
         }
     }
 
