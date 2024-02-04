@@ -31,7 +31,7 @@ class TitleViewModel : ViewModel() {
         url.value = newUrl
     }
     sealed interface AnimeUiState {
-        data class Success(val url: AnimeTitle) : AnimeUiState
+        data class Success(val animeTitle: AnimeTitle) : AnimeUiState
         data object Error : AnimeUiState
         data object Loading : AnimeUiState
     }
@@ -43,7 +43,7 @@ class TitleViewModel : ViewModel() {
             uiState = AnimeUiState.Loading
             uiState = try {
                 AnimeUiState.Success(
-                    animeTitleRepository.getAnimeTitlePhoto(getUrl()?.text ?: fakeUrl )
+                    
                 )
             } catch (_: IOException) {
                 AnimeUiState.Error

@@ -41,6 +41,10 @@ object NetworkModule {
     fun provideTitleApiService(): TitleApiService {
         return provideRetrofit().create(TitleApiService::class.java)
     }
-
+    @Provides
+    @Singleton
+    fun provideAnimeTitleRepository() : AnimeTitle {
+        return NetworkAnimeTitleRepository(provideTitleApiService().searchByURL())
+    }
 }
 
