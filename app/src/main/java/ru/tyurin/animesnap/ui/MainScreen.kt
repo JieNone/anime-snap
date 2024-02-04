@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,7 +27,7 @@ import ru.tyurin.animesnap.ui.screens.TitleViewModel
 @Composable
 fun NavController() {
     val navController = rememberNavController()
-    val titleViewModel: TitleViewModel = hiltViewModel()
+    val titleViewModel: TitleViewModel = viewModel()
 
 
     NavHost(navController = navController, startDestination = "anime_title_app") {

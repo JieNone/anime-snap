@@ -18,9 +18,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class TitleViewModel : ViewModel() {
-
-    @Inject lateinit var animeTitleRepository: AnimeTitleRepository
+class TitleViewModel @Inject constructor(private val animeTitleRepository: AnimeTitleRepository) : ViewModel() {
     var uiState: AnimeUiState by mutableStateOf(AnimeUiState.Loading)
         private set
 
