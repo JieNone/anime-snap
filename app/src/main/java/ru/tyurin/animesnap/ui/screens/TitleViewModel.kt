@@ -11,16 +11,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.tyurin.animesnap.data.models.AnimeTitle
-import ru.tyurin.animesnap.data.repository.AnimeTitleRepository
 import ru.tyurin.animesnap.data.utils.SharedPreferencesKeys
+import ru.tyurin.animesnap.di.NetworkModule
 import java.io.IOException
-import javax.inject.Inject
 
 
 @HiltViewModel
-class TitleViewModel @Inject constructor(private val animeTitleRepository: AnimeTitleRepository) : ViewModel() {
+class TitleViewModel : ViewModel() {
     var uiState: AnimeUiState by mutableStateOf(AnimeUiState.Loading)
         private set
+
+    private var animeTitleRepository = NetworkModule.provideAnimeTitleRepository()
 
     private var titleJob : Job? = null
 
