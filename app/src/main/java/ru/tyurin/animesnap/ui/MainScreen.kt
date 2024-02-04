@@ -27,7 +27,7 @@ import ru.tyurin.animesnap.ui.screens.TitleViewModel
 @Composable
 fun NavController() {
     val navController = rememberNavController()
-    val titleViewModel: TitleViewModel = viewModel(factory = TitleViewModel.Factory)
+    val titleViewModel: TitleViewModel = viewModel()
 
 
     NavHost(navController = navController, startDestination = "anime_title_app") {
@@ -50,7 +50,6 @@ fun NavController() {
 fun AnimeTitleApp(
     onNavigateToHomeScreen: () -> Unit,
     titleViewModel: TitleViewModel
-
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(

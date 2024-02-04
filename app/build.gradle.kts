@@ -4,6 +4,8 @@ plugins {
     id("kotlinx-serialization")
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -20,6 +22,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.incremental"] = "true"
+            }
         }
     }
 
@@ -86,8 +94,13 @@ dependencies {
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$navVersion")
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
-    // Jetpack Compose Integration
     implementation("androidx.navigation:navigation-compose:$navVersion")
-    implementation ("com.google.dagger:dagger:2.48.1")
-    kapt ("com.google.dagger:dagger-compiler:2.48.1")
+    // Dagger Hilt
+    implementation("com.google.dagger:hilt-android:2.50")
+    annotationProcessor("com.google.dagger:hilt-android-compiler:2.48.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+}
+
+kapt {
+    correctErrorTypes = true
 }
