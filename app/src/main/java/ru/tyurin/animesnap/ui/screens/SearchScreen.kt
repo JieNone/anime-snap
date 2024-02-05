@@ -16,10 +16,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import ru.tyurin.animesnap.R
+import ru.tyurin.animesnap.viewmodels.TitleViewModel
 
 @Composable
-fun SearchScreen(titleViewModel: TitleViewModel, onNavigateToHomeScreen: () -> Unit) {
+fun SearchScreen(
+    titleViewModel: TitleViewModel = hiltViewModel(),
+    onNavigateToHomeScreen: () -> Unit
+) {
     val urlState = remember { mutableStateOf(TextFieldValue()) }
 
     Column(

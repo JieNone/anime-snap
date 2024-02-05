@@ -2,7 +2,7 @@ package ru.tyurin.animesnap.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.tyurin.animesnap.data.models.AnimeTitle
+import ru.tyurin.animesnap.domain.models.AnimeTitle
 
 
 interface TitleApiService {
