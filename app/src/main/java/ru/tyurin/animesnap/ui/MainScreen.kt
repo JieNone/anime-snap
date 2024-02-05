@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,27 +22,28 @@ import androidx.navigation.compose.rememberNavController
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.ui.screens.HomeScreen
 import ru.tyurin.animesnap.ui.screens.SearchScreen
-import ru.tyurin.animesnap.ui.screens.TitleViewModel
+import ru.tyurin.animesnap.viewmodels.TitleViewModel
 
 
 @Composable
 fun NavController() {
     val navController = rememberNavController()
-    val titleViewModel: TitleViewModel = viewModel()
-
-
+    val titleViewModel = hiltViewModel<TitleViewModel>()
     NavHost(navController = navController, startDestination = "anime_title_app") {
-        composable("anime_title_app") { 
+        composable("anime_title_app") {
             AnimeTitleApp(
                 onNavigateToHomeScreen = { navController.navigate("home_screen") },
-                titleViewModel
+                viewModel = titleViewModel
             )
         }
-        composable("home_screen")
-        { HomeScreen(uiState = titleViewModel.uiState, retryAction = titleViewModel::getTitleByUrl) }
+        composable("home_screen") {
+            HomeScreen(
+                viewModel = titleViewModel,
+                retryAction = titleViewModel::getTitleByUrl
+            )
+        }
 
     }
-
 }
 
 
@@ -49,7 +51,7 @@ fun NavController() {
 @Composable
 fun AnimeTitleApp(
     onNavigateToHomeScreen: () -> Unit,
-    titleViewModel: TitleViewModel
+    viewModel: TitleViewModel = viewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -61,7 +63,7 @@ fun AnimeTitleApp(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            SearchScreen(onNavigateToHomeScreen = onNavigateToHomeScreen, titleViewModel = titleViewModel)
+            SearchScreen(onNavigateToHomeScreen = onNavigateToHomeScreen, titleViewModel = viewModel)
         }
     }
 }

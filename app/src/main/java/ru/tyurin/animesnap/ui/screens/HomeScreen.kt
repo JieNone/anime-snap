@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,17 +20,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
-import ru.tyurin.animesnap.data.models.AnimeTitle
-import ru.tyurin.animesnap.data.models.Result
+import ru.tyurin.animesnap.domain.models.AnimeTitle
+import ru.tyurin.animesnap.domain.models.Result
+import ru.tyurin.animesnap.data.utils.AnimeUiState
 import ru.tyurin.animesnap.data.utils.DoubleToPercentage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
+import ru.tyurin.animesnap.viewmodels.TitleViewModel
 
 @Composable
 fun ErrorScreen(
@@ -63,17 +64,17 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun HomeScreen(
-    uiState: TitleViewModel.AnimeUiState,
     modifier: Modifier = Modifier,
+    viewModel: TitleViewModel = viewModel(),
     retryAction: () -> Unit,
 
-) {
-    when (uiState) {
-        is TitleViewModel.AnimeUiState.Success ->
-            TitlesGridScreen(photos = uiState.url, modifier)
-        is TitleViewModel.AnimeUiState.Loading ->
+    ) {
+    when (val uiState = viewModel.uiState) {
+        is AnimeUiState.Success ->
+            TitlesGridScreen(photos = uiState.animeTitle, modifier)
+        is AnimeUiState.Loading ->
             LoadingScreen(modifier = modifier.fillMaxSize())
-        is TitleViewModel.AnimeUiState.Error ->
+        is AnimeUiState.Error ->
             ErrorScreen(
                 retryAction,
                 modifier = modifier.fillMaxSize(),

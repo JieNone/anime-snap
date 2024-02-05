@@ -1,4 +1,4 @@
-package ru.tyurin.animesnap.di
+package ru.tyurin.animesnap.di.modules
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -9,29 +9,31 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import ru.tyurin.animesnap.data.network.TitleApiService
+import ru.tyurin.animesnap.data.network.repository.AnimeTitleRepositoryImpl
 import ru.tyurin.animesnap.data.utils.SharedPreferencesKeys
-import javax.inject.Singleton
+import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
 
-@InstallIn(SingletonComponent::class)
 @Module
-object NetworkModule {
+@InstallIn(SingletonComponent::class)
+class AppModules {
 
     @Provides
-    @Singleton
     fun provideRetrofit(): Retrofit {
-        val baseUrl = SharedPreferencesKeys.BASE_URL
         return Retrofit.Builder()
+            .baseUrl(SharedPreferencesKeys.BASE_URL)
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-            .baseUrl(baseUrl)
             .build()
     }
+    @Provides
+    fun provideApiService(
+        retrofit: Retrofit
+    ): TitleApiService = retrofit.create(TitleApiService::class.java)
+
 
     @Provides
-    @Singleton
-    fun provideTitleApiService(): TitleApiService {
-        return provideRetrofit().create(TitleApiService::class.java)
-    }
-
-
+    fun provideAnimeTitleRepository(
+        titleApiService: TitleApiService
+    ) : AnimeTitleRepository = AnimeTitleRepositoryImpl(
+        apiService = titleApiService
+    )
 }
-
