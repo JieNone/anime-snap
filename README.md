@@ -5,6 +5,7 @@ I built this project for learning purposes. I mainly focused on the functionalit
 # ⚙️ Stack
 - `Hilt`
 - `Retrofit`
+- `Coroutines`
 - `Coil`
 - `Kotlin Serialization`
 - `MVVM`
