@@ -63,11 +63,10 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeScreen(
+fun DataScreen(
     modifier: Modifier = Modifier,
     viewModel: TitleViewModel = viewModel(),
     retryAction: () -> Unit,
-
     ) {
     when (val uiState = viewModel.uiState) {
         is AnimeUiState.Success ->
@@ -86,13 +85,15 @@ fun HomeScreen(
 fun AnimeTitleCard(results: List<Result>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         results.forEach { result ->
-            Text(
-                text = result.filename,
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 18.sp,
+            result.filename?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 18.sp,
 
-            )
-            DoubleToPercentage(number = result.similarity)
+                    )
+            }
+            result.similarity?.let { DoubleToPercentage(number = it) }
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(result.imgSrc)

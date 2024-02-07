@@ -13,12 +13,12 @@ data class AnimeTitle(
 
 @Serializable
 data class Result(
-    val similarity: Double,
-    @SerialName(value = "image") val imgSrc: String,
-    val anilist: Int,
-    val filename: String,
-    val episode: Int,
-    val from: Double,
-    val to: Double,
-    val video: String,
+    val similarity: Double?,
+    @SerialName(value = "image") val imgSrc: String?    ,
+    val anilist: Int?,
+    val filename: String?,
+    val episode: Float?,
+    val from: Double?,
+    val to: Double?,
+    val video: String?,
 )

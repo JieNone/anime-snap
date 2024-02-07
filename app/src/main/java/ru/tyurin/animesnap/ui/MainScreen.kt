@@ -20,8 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.tyurin.animesnap.R
-import ru.tyurin.animesnap.ui.screens.HomeScreen
-import ru.tyurin.animesnap.ui.screens.SearchScreen
+import ru.tyurin.animesnap.ui.screens.DataScreen
+import ru.tyurin.animesnap.ui.screens.search.SearchScreen
 import ru.tyurin.animesnap.viewmodels.TitleViewModel
 
 
@@ -29,6 +29,7 @@ import ru.tyurin.animesnap.viewmodels.TitleViewModel
 fun NavController() {
     val navController = rememberNavController()
     val titleViewModel = hiltViewModel<TitleViewModel>()
+    val dataScreenViewModel = hiltViewModel<TitleViewModel>()
     NavHost(navController = navController, startDestination = "anime_title_app") {
         composable("anime_title_app") {
             AnimeTitleApp(
@@ -37,12 +38,11 @@ fun NavController() {
             )
         }
         composable("home_screen") {
-            HomeScreen(
-                viewModel = titleViewModel,
-                retryAction = titleViewModel::getTitleByUrl
+            DataScreen(
+                viewModel = dataScreenViewModel,
+                retryAction = dataScreenViewModel::getTitleByUrl
             )
         }
-
     }
 }
 

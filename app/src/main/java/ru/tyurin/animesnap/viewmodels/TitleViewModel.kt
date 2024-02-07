@@ -3,17 +3,17 @@ package ru.tyurin.animesnap.viewmodels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.State
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
 import ru.tyurin.animesnap.data.utils.AnimeUiState
 import ru.tyurin.animesnap.data.utils.SharedPreferencesKeys
+import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
 import java.io.IOException
 import javax.inject.Inject
 
@@ -34,16 +34,25 @@ class TitleViewModel @Inject constructor(
     }
     fun getTitleByUrl() {
         titleJob?.cancel()
+        uiState = AnimeUiState.Loading
         titleJob = viewModelScope.launch {
-
             val fakeUrl = SharedPreferencesKeys.FAKE_IMG_URL
-            uiState = AnimeUiState.Loading
+            val url = url.value?.text ?: fakeUrl
+            
             uiState = try {
                 AnimeUiState.Success(
-                    repository.getAnimeTitlePhoto(url.value?.text ?: fakeUrl)
+                    repository.getAnimeTitlePhoto(url)
                 )
-            } catch (_: IOException) {
+            } catch (e: IOException) {
                 AnimeUiState.Error
+            } catch (e: NullPointerException) {
+                AnimeUiState.Error
+            } catch (e: retrofit2.HttpException) {
+                if (e.code() == 400){
+                    AnimeUiState.Error
+                } else {
+                    AnimeUiState.Error
+                }
             }
         }
     }
@@ -51,4 +60,5 @@ class TitleViewModel @Inject constructor(
         super.onCleared()
         titleJob?.cancel()
     }
+
 }

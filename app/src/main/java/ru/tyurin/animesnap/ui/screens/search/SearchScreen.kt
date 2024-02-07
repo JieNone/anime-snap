@@ -1,4 +1,4 @@
-package ru.tyurin.animesnap.ui.screens
+package ru.tyurin.animesnap.ui.screens.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,8 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,7 +28,7 @@ fun SearchScreen(
     onNavigateToHomeScreen: () -> Unit
 ) {
     val urlState = remember { mutableStateOf(TextFieldValue()) }
-
+    var isLoading by remember { mutableStateOf(false)}
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -50,14 +52,16 @@ fun SearchScreen(
         Button(
             onClick = {
                 val destination = urlState.value
-                if (destination.text.isNotBlank()) {
+                if (destination.text.isNotBlank() && !isLoading) {
+                    isLoading = true
                     titleViewModel.updateUrl(urlState.value)
                     titleViewModel.getTitleByUrl()
                     onNavigateToHomeScreen()
                 }
 
             },
-            modifier = Modifier.padding(vertical = 20.dp)
+            modifier = Modifier.padding(vertical = 20.dp),
+            enabled = !isLoading
         ) {
             Text(stringResource(R.string.find_this))
         }
