@@ -1,4 +1,4 @@
-package ru.tyurin.animesnap.data.utils
+package ru.tyurin.animesnap.utils
 
 object SharedPreferencesKeys {
     const val BASE_URL = "https://api.trace.moe"

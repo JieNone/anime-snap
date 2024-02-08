@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.media3:media3-common:1.2.1")
     val navVersion = "2.7.6"
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

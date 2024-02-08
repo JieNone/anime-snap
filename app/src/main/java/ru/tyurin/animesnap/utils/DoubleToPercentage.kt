@@ -1,4 +1,4 @@
-package ru.tyurin.animesnap.data.utils
+package ru.tyurin.animesnap.utils
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

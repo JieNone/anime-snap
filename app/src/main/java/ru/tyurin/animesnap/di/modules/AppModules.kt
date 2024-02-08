@@ -10,7 +10,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import ru.tyurin.animesnap.data.network.TitleApiService
 import ru.tyurin.animesnap.data.network.repository.AnimeTitleRepositoryImpl
-import ru.tyurin.animesnap.data.utils.SharedPreferencesKeys
+import ru.tyurin.animesnap.utils.SharedPreferencesKeys
 import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
 
 @Module
