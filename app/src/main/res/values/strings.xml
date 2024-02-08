@@ -10,4 +10,5 @@
     <string name="enter_the_url">Введите URL</string>
     <string name="find_this">Искать!</string>
     <string name="probability">%s Вероятность</string>
+    <string name="select_image">Выберите изображение</string>
 </resources>

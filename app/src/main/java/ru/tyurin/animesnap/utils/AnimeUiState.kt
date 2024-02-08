@@ -1,4 +1,4 @@
-package ru.tyurin.animesnap.data.utils
+package ru.tyurin.animesnap.utils
 
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 

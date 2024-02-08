@@ -29,8 +29,8 @@ import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
-import ru.tyurin.animesnap.data.utils.AnimeUiState
-import ru.tyurin.animesnap.data.utils.DoubleToPercentage
+import ru.tyurin.animesnap.utils.AnimeUiState
+import ru.tyurin.animesnap.utils.DoubleToPercentage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.viewmodels.TitleViewModel
 
