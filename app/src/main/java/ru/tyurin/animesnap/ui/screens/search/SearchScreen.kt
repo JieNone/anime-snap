@@ -1,9 +1,5 @@
 package ru.tyurin.animesnap.ui.screens.search
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -69,32 +65,6 @@ fun SearchScreen(
         ) {
             Text(stringResource(R.string.find_this))
         }
-        ImagePicker(viewModel = titleViewModel, onNavigateToHomeScreen)
+        ImagePicker()
     }
-}
-
-@Composable
-fun ImagePicker(viewModel: TitleViewModel, onNavigateToHomeScreen: () -> Unit) {
-
-    val result = remember { mutableStateOf<Uri?>(null) }
-        val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
-            result.value = it
-        }
-
-    Column {
-        Button(onClick = {
-            launcher.launch(
-                PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
-
-            )
-        }) {
-            Text(text = stringResource(R.string.select_image))
-        }
-        result.value?.let {
-            viewModel.updateUri(it)
-            viewModel.uploadImage()
-            onNavigateToHomeScreen()
-        }
-    }
-    
 }
