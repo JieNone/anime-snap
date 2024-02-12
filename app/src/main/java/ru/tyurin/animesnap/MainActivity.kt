@@ -9,7 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
-import ru.tyurin.animesnap.ui.NavController
+import ru.tyurin.animesnap.ui.navigation.AppNavigation
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 
 @AndroidEntryPoint
@@ -19,12 +19,11 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             AnimeSnapTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavController()
+                    AppNavigation()
                 }
             }
         }

@@ -1,7 +1,5 @@
 package ru.tyurin.animesnap.viewmodels
 
-import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,21 +7,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.util.Util
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
 import ru.tyurin.animesnap.utils.AnimeUiState
 import ru.tyurin.animesnap.utils.SharedPreferencesKeys
-import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.OutputStream
 import javax.inject.Inject
 
 

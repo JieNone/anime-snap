@@ -17,7 +17,7 @@ interface TitleApiService {
 
     @Multipart
     @POST("/search")
-    suspend fun searchFromLocal(
+    suspend fun searchFromLocalStorage(
         @Part image: MultipartBody.Part
     ): AnimeTitle
 }

@@ -6,9 +6,13 @@
     <string name="loading">Loading</string>
     <string name="title_photo">Possible title image</string>
     <string name="blank_url">https://img3.aksam.com.tr/imgsdisk/2020/12/14/t25_something-went-wrong-ne-d-411.jpg</string>
-    <string name="search_by_url">Поиск по URL</string>
     <string name="enter_the_url">Введите URL</string>
     <string name="find_this">Искать!</string>
     <string name="probability">%s Вероятность</string>
-    <string name="select_image">Выберите изображение</string>
+    <string name="select_image">Выберите картинку</string>
+    <string name="button_back">Кнопка назад</string>
+    <string name="most_similar_to">Наиболее похожие</string>
+    <string name="my_list">My List</string>
+    <string name="search">Search</string>
+    <string name="downloads">Downloads</string>
 </resources>
