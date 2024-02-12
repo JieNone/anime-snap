@@ -56,7 +56,7 @@ fun AnimeTitleApp(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { AnimeTopAppBar(scrollBehavior = scrollBehavior) }
+        topBar = { AnimeTopAppBar(scrollBehavior = scrollBehavior) },
     ) {
         Surface(
             modifier = Modifier

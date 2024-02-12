@@ -34,7 +34,7 @@ fun SearchScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(R.string.search_by_url),
+            text = stringResource(R.string.enter_the_url),
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 24.sp,
             modifier = Modifier.padding(vertical = 20.dp)
@@ -65,6 +65,6 @@ fun SearchScreen(
         ) {
             Text(stringResource(R.string.find_this))
         }
-        ImagePicker()
+        ImagePicker(onNavigateToHomeScreen = onNavigateToHomeScreen)
     }
 }
