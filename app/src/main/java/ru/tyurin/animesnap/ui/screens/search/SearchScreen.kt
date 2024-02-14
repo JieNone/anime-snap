@@ -65,6 +65,6 @@ fun SearchScreen(
         ) {
             Text(stringResource(R.string.find_this))
         }
-        ImagePicker(onNavigateToHomeScreen = onNavigateToHomeScreen)
+        ImagePicker()
     }
 }

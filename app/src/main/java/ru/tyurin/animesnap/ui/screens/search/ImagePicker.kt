@@ -16,16 +16,15 @@ import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
 @Composable
-fun ImagePicker(viewModel: UploadViewModel = hiltViewModel(), onNavigateToHomeScreen: () -> Unit) {
+fun ImagePicker(viewModel: UploadViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val pickMedia = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(), onResult = { uri ->
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
             context.contentResolver.takePersistableUriPermission(uri, flag)
+            context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             viewModel.updatePickedImage(uri)
-            viewModel.getTitleFromLocalStorage()
-            onNavigateToHomeScreen()
         } else {
             Log.d("PhotoPicker", "No image selected")
         }

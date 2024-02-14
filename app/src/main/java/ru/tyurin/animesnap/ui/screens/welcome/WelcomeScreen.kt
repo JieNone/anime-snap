@@ -1,82 +1,79 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package ru.tyurin.animesnap.ui.screens.welcome
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
+import ru.tyurin.animesnap.domain.models.AnimeTitle
+import ru.tyurin.animesnap.domain.models.Result
+import ru.tyurin.animesnap.ui.screens.search.ImagePicker
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
+import ru.tyurin.animesnap.utils.AnimeUiState
+import ru.tyurin.animesnap.utils.DoubleToPercentage
+import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(viewModel: UploadViewModel = hiltViewModel()) {
+
+    val serverResponseState by viewModel.state.collectAsState()
+
     AnimeSnapTheme {
         Surface {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                SearchBar()
+                ImagePicker(viewModel)
                 MostSimilarTo()
-                ElementContainer()
+                viewModel.getTitleFromLocalStorage()
+                when (serverResponseState) {
+                    is AnimeUiState.Loading -> {
+                        // Показываем индикатор загрузки, пока данные загружаются
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    }
+                    is AnimeUiState.Success -> {
+                        // Данные успешно загружены, отображаем список элементов
+                        TitlesGridScreen((serverResponseState as AnimeUiState.Success).animeTitle)
+                    }
+                    is AnimeUiState.Error -> {
+                        // Возникла ошибка при загрузке данных
+                        Text("Ошибка при загрузке данных")
+                    }
+                }
             }
         }
     }
 }
-@Composable
-fun SearchBar() {
-    Row(
-        modifier = Modifier
-            .padding(16.dp),
-    ) {
-        CardSearch(text = stringResource(id = R.string.enter_the_url)) {
 
-        }
-        CardSearch(text = stringResource(id = R.string.select_image)) {
-
-        }
-    }
-}
-@Composable
-fun CardSearch(text: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
-        onClick = { onClick },
-        shape = RoundedCornerShape(12.dp),
-    ){
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            text = text,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    
-}
 @Composable
 fun MostSimilarTo() {
         Text(
@@ -91,20 +88,25 @@ fun MostSimilarTo() {
 }
 
 @Composable
-fun ElementContainer() {
-    Column(modifier = Modifier
-        .padding(top = 12.dp, start = 16.dp)
-        .fillMaxSize()) {
-        Element()
-        Element()
-        Element()
-        Element()
-        Element()
+fun TitlesGridScreen(
+    photos: AnimeTitle,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
+) {
+    LazyColumn(
+        modifier = modifier
+            .padding(vertical = 4.dp)
+            .fillMaxWidth(),
+        contentPadding = contentPadding
+    ) {
+        items(photos.result.take(4)) { result ->
+            Element(results = listOf(result))
+        }
     }
 }
 
 @Composable
-fun Element() {
+fun Element(results: List<Result>, modifier: Modifier = Modifier) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -116,25 +118,34 @@ fun Element() {
     ) {
         Row(
             modifier = Modifier
+        ) {
+            Column(modifier = modifier
+                .padding(top = 12.dp, start = 16.dp)
+                .fillMaxSize()
             ) {
-            Column {
-                Text("Naruto")
-                Row {
-                    Text(text = "Эпизод 54")
-                    Text(text = "Соответствие 99%")
+                results.forEach { result ->
+                    result.filename?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 18.sp,
+                        )
+                    }
+                    result.similarity?.let { DoubleToPercentage(number = it) }
+                    AsyncImage(
+                        model = ImageRequest.Builder(context = LocalContext.current)
+                            .data(result.imgSrc)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = stringResource(R.string.title_photo),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxWidth(),
+                        error = painterResource(id = R.drawable.ic_broken_image),
+                        placeholder = painterResource(id = R.drawable.loading_img)
+                    )
                 }
             }
-            Image(
-                painter = painterResource(id = R.drawable.sample_image),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                alignment = Alignment.CenterEnd,
-            )
         }
-
-
     }
-
 }
+
