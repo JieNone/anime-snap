@@ -42,7 +42,7 @@ class AnimeTitleRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getFromLocal(uri: Uri): AnimeTitle {
+    override suspend fun getDataFromServer(uri: Uri): AnimeTitle {
         val file = File(uri.path ?: "")
         val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("image", file.name, requestFile)
