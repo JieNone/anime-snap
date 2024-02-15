@@ -1,30 +1,23 @@
 package ru.tyurin.animesnap.ui.screens.search
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
 import java.io.File
-
 
 @Composable
 fun PickImage(
     viewModel: UploadViewModel,
     context: Context
 ) {
-    var imageFile by remember {
-        mutableStateOf<File?>(null)
-    }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
@@ -38,19 +31,17 @@ fun PickImage(
                         input.copyTo(output)
                     }
                 }
-                imageFile = file
+
+                Log.d("PICK_IMAGE", "Selected image: $file")
+                viewModel.uploadImage(file)
             }
-            viewModel.uploadImage(imageFile!!)
         }
     )
     Column {
-        Button(onClick ={
+        Button(onClick = {
             galleryLauncher.launch("image/*")
-
         }) {
             Text(text = stringResource(id = R.string.select_image))
         }
     }
 }
-
-

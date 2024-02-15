@@ -11,14 +11,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
@@ -37,6 +35,7 @@ import ru.tyurin.animesnap.domain.models.Result
 import ru.tyurin.animesnap.ui.screens.search.PickImage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
+import ru.tyurin.animesnap.utils.AnimeUiState.Success
 import ru.tyurin.animesnap.utils.DoubleToPercentage
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
@@ -45,7 +44,8 @@ import ru.tyurin.animesnap.viewmodels.UploadViewModel
 fun WelcomeScreen(
     viewModel: UploadViewModel = hiltViewModel()
 ) {
-    val serverResponseState by viewModel.state.collectAsState()
+
+    val uiState: AnimeUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     AnimeSnapTheme {
         Surface {
@@ -55,17 +55,9 @@ fun WelcomeScreen(
             ) {
                 PickImage(viewModel, context)
                 MostSimilarTo()
-                when (serverResponseState) {
-                    is AnimeUiState.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    if (uiState is Success) {
+                        TitlesGridScreen((uiState as Success).animeTitle)
                     }
-                    is AnimeUiState.Success -> {
-                        TitlesGridScreen((serverResponseState as AnimeUiState.Success).animeTitle)
-                    }
-                    is AnimeUiState.Error -> {
-                        Text("Ошибка при загрузке данных")
-                    }
-                }
             }
         }
     }
@@ -96,7 +88,7 @@ fun TitlesGridScreen(
             .fillMaxWidth(),
         contentPadding = contentPadding
     ) {
-        items(photos.result.take(4)) { result ->
+        items(photos.result) { result ->
             Element(results = listOf(result))
         }
     }
