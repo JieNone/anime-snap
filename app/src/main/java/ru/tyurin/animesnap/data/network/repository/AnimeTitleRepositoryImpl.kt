@@ -4,6 +4,7 @@ import android.net.Uri
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Response
 import ru.tyurin.animesnap.data.network.TitleApiService
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
@@ -42,31 +43,9 @@ class AnimeTitleRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getDataFromServer(uri: Uri): AnimeTitle {
-        val file = File(uri.path ?: "")
-        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val imagePart = MultipartBody.Part.createFormData("image", file.name, requestFile)
-        val response = apiService.searchFromLocalStorage(imagePart)
-
-        if (response.error.isNotEmpty()) {
-            throw IllegalStateException("Произошла ошибка: ${response.error}")
-        }
-        val results = response.result.map { result ->
-            Result(
-                similarity = result.similarity,
-                imgSrc = result.imgSrc,
-                anilist = result.anilist,
-                filename = result.filename,
-                episode = result.episode,
-                from = result.from,
-                to = result.to,
-                video = result.video
-            )
-        }
-        return AnimeTitle(
-            frameCount = response.frameCount,
-            error = response.error,
-            result = results
-        )
+    override suspend fun searchByImage(imageFile: File): Response<AnimeTitle> {
+        val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+        return apiService.searchByImage(body)
     }
 }

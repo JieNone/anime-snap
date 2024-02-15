@@ -34,7 +34,7 @@ import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
-import ru.tyurin.animesnap.ui.screens.search.ImagePicker
+import ru.tyurin.animesnap.ui.screens.search.PickImage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
 import ru.tyurin.animesnap.utils.DoubleToPercentage
@@ -42,30 +42,27 @@ import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
 
 @Composable
-fun WelcomeScreen(viewModel: UploadViewModel = hiltViewModel()) {
-
+fun WelcomeScreen(
+    viewModel: UploadViewModel = hiltViewModel()
+) {
     val serverResponseState by viewModel.state.collectAsState()
-
+    val context = LocalContext.current
     AnimeSnapTheme {
         Surface {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                ImagePicker(viewModel)
+                PickImage(viewModel, context)
                 MostSimilarTo()
-                viewModel.getTitleFromLocalStorage()
                 when (serverResponseState) {
                     is AnimeUiState.Loading -> {
-                        // Показываем индикатор загрузки, пока данные загружаются
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                     }
                     is AnimeUiState.Success -> {
-                        // Данные успешно загружены, отображаем список элементов
                         TitlesGridScreen((serverResponseState as AnimeUiState.Success).animeTitle)
                     }
                     is AnimeUiState.Error -> {
-                        // Возникла ошибка при загрузке данных
                         Text("Ошибка при загрузке данных")
                     }
                 }
