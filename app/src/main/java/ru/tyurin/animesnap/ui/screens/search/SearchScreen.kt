@@ -56,7 +56,6 @@ fun SearchScreen(
                     isLoading = true
                     titleViewModel.updateUrl(urlState.value)
                     titleViewModel.getTitleByUrl()
-                    onNavigateToHomeScreen()
                 }
 
             },
@@ -65,6 +64,5 @@ fun SearchScreen(
         ) {
             Text(stringResource(R.string.find_this))
         }
-        ImagePicker()
     }
 }

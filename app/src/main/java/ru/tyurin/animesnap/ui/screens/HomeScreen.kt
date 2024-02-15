@@ -29,10 +29,10 @@ import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
+import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
 import ru.tyurin.animesnap.utils.DoubleToPercentage
-import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
-import ru.tyurin.animesnap.viewmodels.TitleViewModel
+import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
 @Composable
 fun ErrorScreen(
@@ -65,7 +65,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 @Composable
 fun DataScreen(
     modifier: Modifier = Modifier,
-    viewModel: TitleViewModel = viewModel(),
+    viewModel: UploadViewModel = viewModel(),
     retryAction: () -> Unit,
     ) {
     when (val uiState = viewModel.uiState) {

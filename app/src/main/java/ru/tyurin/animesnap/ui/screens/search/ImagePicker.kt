@@ -1,37 +1,51 @@
 package ru.tyurin.animesnap.ui.screens.search
 
-import android.content.Intent
-import android.util.Log
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
+import java.io.File
+
 
 @Composable
-fun ImagePicker(viewModel: UploadViewModel = hiltViewModel()) {
-    val context = LocalContext.current
-    val pickMedia = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(), onResult = { uri ->
-        if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
-            val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            context.contentResolver.takePersistableUriPermission(uri, flag)
-            context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            viewModel.updatePickedImage(uri)
-        } else {
-            Log.d("PhotoPicker", "No image selected")
+fun PickImage(
+    viewModel: UploadViewModel,
+    context: Context
+) {
+    var imageFile by remember {
+        mutableStateOf<File?>(null)
+    }
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let { selectedUri ->
+                val contentResolver = context.contentResolver
+                val inputStream = contentResolver.openInputStream(selectedUri)
+                val fileName = "image_${System.currentTimeMillis()}.jpg"
+                val file = File(context.cacheDir, fileName)
+                inputStream?.use { input ->
+                    file.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                imageFile = file
+            }
+            viewModel.uploadImage(imageFile!!)
         }
-    })
+    )
     Column {
         Button(onClick ={
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            galleryLauncher.launch("image/*")
 
         }) {
             Text(text = stringResource(id = R.string.select_image))

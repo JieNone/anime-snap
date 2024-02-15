@@ -1,6 +1,7 @@
 package ru.tyurin.animesnap.data.network
 
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -15,9 +16,8 @@ interface TitleApiService {
         @Query(value = "url") imageUrl: String
     ): AnimeTitle
 
+
     @Multipart
     @POST("/search")
-    suspend fun searchFromLocalStorage(
-        @Part image: MultipartBody.Part
-    ): AnimeTitle
+    suspend fun searchByImage(@Part image: MultipartBody.Part): Response<AnimeTitle>
 }

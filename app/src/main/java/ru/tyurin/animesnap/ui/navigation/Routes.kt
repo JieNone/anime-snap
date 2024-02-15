@@ -10,7 +10,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 enum class Routes {
     MyList,
     Search,
-    Downloads
+    Downloads,
+    Detail
 }
 
 data class NavItem(
