@@ -1,9 +1,7 @@
 package ru.tyurin.animesnap.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.produceState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,34 +16,34 @@ import javax.inject.Inject
 @HiltViewModel
 class UploadViewModel @Inject constructor(
     private val repository: AnimeTitleRepository
-
 ) : ViewModel() {
-    var uiState: AnimeUiState by mutableStateOf(AnimeUiState.Loading)
-        private set
 
-    var state: MutableStateFlow<AnimeUiState> = MutableStateFlow(AnimeUiState.Loading)
+    var uiState: MutableStateFlow<AnimeUiState> = MutableStateFlow(AnimeUiState.Loading)
+
 
     fun uploadImage(imageFile: File) {
         viewModelScope.launch {
             try {
+                Log.d("UPLOAD_VIEW_MODEL", "Start uploading image: $imageFile")
                 val response = repository.searchByImage(imageFile)
                 if (response.isSuccessful) {
                     val animeTitle = response.body()
-                    state.value = AnimeUiState.Success(animeTitle!!)
+                    uiState.value = AnimeUiState.Success(animeTitle!!)
                 }
+                Log.d("UPLOAD_VIEW_MODEL", "Upload completed successfully")
             } catch (e: IOException) {
-                Log.e("EXCEPTION", e.toString())
-                AnimeUiState.Error
+                Log.e("UPLOAD_VIEW_MODEL", "IOException occurred: $e")
+                uiState.value = AnimeUiState.Error
             } catch (e: NullPointerException) {
-                Log.e("EXCEPTION", e.toString())
-                AnimeUiState.Error
+                Log.e("UPLOAD_VIEW_MODEL", "NullPointerException occurred: $e")
+                uiState.value = AnimeUiState.Error
             } catch (e: retrofit2.HttpException) {
-                Log.e("EXCEPTION", e.toString())
+                Log.e("UPLOAD_VIEW_MODEL", "HttpException occurred: $e")
                 if (e.code() == 400) {
-                    AnimeUiState.Error
+                    uiState.value = AnimeUiState.Error
                 } else {
-                    Log.e("EXCEPTION", e.toString())
-                    AnimeUiState.Error
+                    Log.e("UPLOAD_VIEW_MODEL", "Unknown HttpException occurred: $e")
+                    uiState.value = AnimeUiState.Error
                 }
             }
         }
