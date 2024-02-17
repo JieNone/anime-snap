@@ -97,44 +97,54 @@ fun TitlesGridScreen(
 @Composable
 fun Element(results: List<Result>, modifier: Modifier = Modifier) {
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(0.dp),
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
         ) {
-            Column(modifier = modifier
-                .padding(top = 12.dp, start = 16.dp)
-                .fillMaxSize()
+            Column(
+                modifier = Modifier
+                    .padding(top = 12.dp, start = 16.dp)
+                    .fillMaxSize()
             ) {
                 results.forEach { result ->
-                    result.filename?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 18.sp,
-                        )
-                    }
-                    result.similarity?.let { DoubleToPercentage(number = it) }
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(result.imgSrc)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = stringResource(R.string.title_photo),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxWidth(),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        placeholder = painterResource(id = R.drawable.loading_img)
-                    )
+                    RenderResult(result)
                 }
             }
         }
     }
 }
+
+@Composable
+private fun RenderResult(result: Result) {
+    result.filename?.let {
+        Text(
+            text = it,
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 18.sp,
+        )
+    }
+    result.similarity?.let { DoubleToPercentage(number = it) }
+    result.imgSrc?.let { RenderImage(it) }
+}
+
+@Composable
+private fun RenderImage(imgSrc: String) {
+    AsyncImage(
+        model = ImageRequest.Builder(context = LocalContext.current)
+            .data(imgSrc)
+            .crossfade(true)
+            .build(),
+        contentDescription = stringResource(R.string.title_photo),
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxWidth(),
+        error = painterResource(id = R.drawable.ic_broken_image),
+        placeholder = painterResource(id = R.drawable.loading_img)
+    )
+}
+
 
