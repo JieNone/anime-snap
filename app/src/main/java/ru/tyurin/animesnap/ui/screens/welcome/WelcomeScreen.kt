@@ -1,14 +1,18 @@
 package ru.tyurin.animesnap.ui.screens.welcome
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,18 +20,23 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
@@ -96,6 +105,18 @@ fun TitlesGridScreen(
 
 @Composable
 fun Element(results: List<Result>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(16.dp)) {
+        results.forEach { result ->
+            RenderResult(result)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = { /* Handle button click */ },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Add To List")
+        }
+    }
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier
@@ -103,17 +124,13 @@ fun Element(results: List<Result>, modifier: Modifier = Modifier) {
             .padding(8.dp),
         shape = RoundedCornerShape(0.dp),
     ) {
-        Row(
-            modifier = modifier
+        Column(
+            modifier = Modifier
+                .padding(top = 12.dp, start = 16.dp)
+                .fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(top = 12.dp, start = 16.dp)
-                    .fillMaxSize()
-            ) {
-                results.forEach { result ->
-                    RenderResult(result)
-                }
+            results.forEach { result ->
+                RenderResult(result)
             }
         }
     }
@@ -121,11 +138,12 @@ fun Element(results: List<Result>, modifier: Modifier = Modifier) {
 
 @Composable
 private fun RenderResult(result: Result) {
-    result.filename?.let {
+    result.anilist.title.english?.let {
         Text(
             text = it,
             modifier = Modifier.fillMaxWidth(),
             fontSize = 18.sp,
+            fontWeight = FontWeight.Black
         )
     }
     result.similarity?.let { DoubleToPercentage(number = it) }
@@ -134,17 +152,17 @@ private fun RenderResult(result: Result) {
 
 @Composable
 private fun RenderImage(imgSrc: String) {
-    AsyncImage(
-        model = ImageRequest.Builder(context = LocalContext.current)
-            .data(imgSrc)
-            .crossfade(true)
-            .build(),
+    Image(
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current).data(data = imgSrc).apply(block = fun ImageRequest.Builder.() {
+                crossfade(true)
+            }).build()
+        ),
         contentDescription = stringResource(R.string.title_photo),
         contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxWidth(),
-        error = painterResource(id = R.drawable.ic_broken_image),
-        placeholder = painterResource(id = R.drawable.loading_img)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .clip(shape = RoundedCornerShape(8.dp))
     )
 }
-
-

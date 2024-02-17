@@ -18,6 +18,6 @@ interface TitleApiService {
 
 
     @Multipart
-    @POST("/search")
+    @POST("/search?anilistInfo")
     suspend fun searchByImage(@Part image: MultipartBody.Part): Response<AnimeTitle>
 }
