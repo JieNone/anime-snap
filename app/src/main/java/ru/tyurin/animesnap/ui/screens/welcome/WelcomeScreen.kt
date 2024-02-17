@@ -138,7 +138,7 @@ fun Element(results: List<Result>, modifier: Modifier = Modifier) {
 
 @Composable
 private fun RenderResult(result: Result) {
-    result.filename?.let {
+    result.anilist.title.english?.let {
         Text(
             text = it,
             modifier = Modifier.fillMaxWidth(),
