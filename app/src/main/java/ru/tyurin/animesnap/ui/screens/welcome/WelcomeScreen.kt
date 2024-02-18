@@ -3,7 +3,6 @@ package ru.tyurin.animesnap.ui.screens.welcome
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,23 +19,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
@@ -138,15 +132,15 @@ fun Element(results: List<Result>, modifier: Modifier = Modifier) {
 
 @Composable
 private fun RenderResult(result: Result) {
-    result.anilist.title.english?.let {
+    result.anilist.title.let {
         Text(
-            text = it,
+            text = "${it.english} / ${it.native}",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 18.sp,
             fontWeight = FontWeight.Black
         )
     }
-    result.similarity?.let { DoubleToPercentage(number = it) }
+    DoubleToPercentage(number = result.similarity)
     result.imgSrc?.let { RenderImage(it) }
 }
 

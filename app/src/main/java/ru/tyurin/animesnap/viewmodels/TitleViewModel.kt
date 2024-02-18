@@ -22,8 +22,7 @@ class TitleViewModel @Inject constructor(
     private val repository: AnimeTitleRepository
 
 ) : ViewModel() {
-    var uiState: AnimeUiState by mutableStateOf(AnimeUiState.Loading)
-        private set
+    private var uiState: AnimeUiState by mutableStateOf(AnimeUiState.Loading)
 
     private var titleJob : Job? = null
 

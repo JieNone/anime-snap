@@ -1,7 +1,6 @@
 package ru.tyurin.animesnap.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.produceState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
