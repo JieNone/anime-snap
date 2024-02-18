@@ -1,6 +1,8 @@
 package ru.tyurin.animesnap.ui.screens.welcome
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -19,8 +21,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -35,6 +39,7 @@ import coil.request.ImageRequest
 import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
+import ru.tyurin.animesnap.ui.screens.BlankScreen
 import ru.tyurin.animesnap.ui.screens.search.PickImage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
@@ -45,22 +50,35 @@ import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
 @Composable
 fun WelcomeScreen(
+
     viewModel: UploadViewModel = hiltViewModel()
 ) {
-
-    val uiState: AnimeUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     AnimeSnapTheme {
         Surface {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                PickImage(viewModel, context)
-                MostSimilarTo()
-                    if (uiState is Success) {
-                        TitlesGridScreen((uiState as Success).animeTitle)
+            Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f, false)
+                ) {
+                    MostSimilarTo()
+                    when (uiState) {
+                        is Success -> TitlesGridScreen((uiState as Success).animeTitle)
+                        is AnimeUiState.Error -> BlankScreen()
+                        is AnimeUiState.Loading -> BlankScreen()
                     }
+                }
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .background(Color.Transparent)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    PickImage(viewModel = viewModel, context = context)
+                }
             }
         }
     }
