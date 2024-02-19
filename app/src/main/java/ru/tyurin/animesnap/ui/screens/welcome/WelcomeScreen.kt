@@ -1,7 +1,6 @@
 package ru.tyurin.animesnap.ui.screens.welcome
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +17,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -50,18 +51,18 @@ import ru.tyurin.animesnap.viewmodels.UploadViewModel
 
 @Composable
 fun WelcomeScreen(
-
     viewModel: UploadViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     AnimeSnapTheme {
         Surface {
-            Column {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f, false)
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
                 ) {
                     MostSimilarTo()
                     when (uiState) {
@@ -70,14 +71,13 @@ fun WelcomeScreen(
                         is AnimeUiState.Loading -> BlankScreen()
                     }
                 }
-                Box(
+                Column(
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
                         .padding(8.dp)
-                        .background(Color.Transparent)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.BottomCenter,
                 ) {
-                    PickImage(viewModel = viewModel, context = context)
+                    PickImage(viewModel = viewModel, context = LocalContext.current)
                 }
             }
         }
@@ -134,7 +134,6 @@ fun Element(results: List<Result>, modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        shape = RoundedCornerShape(0.dp),
     ) {
         Column(
             modifier = Modifier
@@ -178,3 +177,4 @@ private fun RenderImage(imgSrc: String) {
             .clip(shape = RoundedCornerShape(8.dp))
     )
 }
+
