@@ -19,13 +19,6 @@ class UploadViewModel @Inject constructor(
 ) : ViewModel() {
 
     var uiState: MutableStateFlow<AnimeUiState> = MutableStateFlow(AnimeUiState.Loading)
-    private val _isVisible = MutableStateFlow(true)
-    val isVisible: StateFlow<Boolean> = _isVisible
-
-    fun changeVisibility(value: Boolean) {
-        _isVisible.value = value
-    }
-
     fun uploadImage(imageFile: File) {
         viewModelScope.launch {
             try {

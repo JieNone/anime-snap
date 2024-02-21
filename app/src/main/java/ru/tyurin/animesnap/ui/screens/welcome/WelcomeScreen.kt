@@ -17,17 +17,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -62,20 +67,20 @@ fun WelcomeScreen(
     viewModel: UploadViewModel = hiltViewModel()
 ) {
     AnimeSnapTheme {
-        val isVisible by viewModel.isVisible.collectAsStateWithLifecycle()
+
+        val isVisible = rememberSaveable { mutableStateOf(true) }
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         val context = LocalContext.current
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (available.y < -1) {
-                        viewModel.changeVisibility(isVisible)
+                        isVisible.value = false
                     }
 
                     if (available.y > 1) {
-                        viewModel.changeVisibility(!isVisible)
+                        isVisible.value = true
                     }
-
                     return Offset.Zero
                 }
             }
@@ -103,12 +108,12 @@ fun WelcomeScreen(
             floatingActionButtonPosition = FabPosition.Center,
             floatingActionButton = {
                 AnimatedVisibility(
-                    visible = isVisible,
+                    visible = isVisible.value,
                     enter = slideInVertically(initialOffsetY = { it * 2 }),
                     exit = slideOutVertically(targetOffsetY = { it * 2 }),
                 ) {
                     ExtendedFloatingActionButton(
-                        onClick = { galleryLauncher.launch("image/*") },
+                        onClick = { galleryLauncher.launch("image/*") }
                     ) {
                         Text(text = stringResource(R.string.select_image))
                     }
