@@ -1,8 +1,9 @@
 package ru.tyurin.animesnap.ui.screens.welcome
 
-import android.util.Log
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -54,6 +55,7 @@ import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
 import ru.tyurin.animesnap.utils.AnimeUiState.Success
 import ru.tyurin.animesnap.utils.DoubleToPercentage
+import ru.tyurin.animesnap.utils.timeCodeFormatter
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
 import java.io.File
 
@@ -62,18 +64,16 @@ import java.io.File
 fun WelcomeScreen(
     viewModel: UploadViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     AnimeSnapTheme {
-
         val isVisible = rememberSaveable { mutableStateOf(true) }
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        val context = LocalContext.current
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (available.y < -1) {
                         isVisible.value = false
                     }
-
                     if (available.y > 1) {
                         isVisible.value = true
                     }
@@ -94,8 +94,6 @@ fun WelcomeScreen(
                             input.copyTo(output)
                         }
                     }
-
-                    Log.d("PICK_IMAGE", "Selected image: $file")
                     viewModel.uploadImage(file)
                 }
             }
@@ -122,7 +120,6 @@ fun WelcomeScreen(
                     .padding(paddingValues)
                     .nestedScroll(nestedScrollConnection),
             ) {
-                MostSimilarTo()
                 when (uiState) {
                     is Success -> TitlesGridScreen((uiState as Success).animeTitle)
                     is AnimeUiState.Error -> BlankScreen()
@@ -189,11 +186,11 @@ fun Element(results: List<Result>, modifier: Modifier = Modifier) {
 
 @Composable
 private fun RenderResult(result: Result) {
-    result.anilist.title.let {
+    result.let {
         Text(
-            text = "${it.english} / ${it.native}",
+            text = "${it.anilist.title.english} / ${it.anilist.title.native}  Эпизод: ${it.episode}, ${timeCodeFormatter(it.from, it.to)}",
             modifier = Modifier.fillMaxWidth(),
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Black
         )
     }
