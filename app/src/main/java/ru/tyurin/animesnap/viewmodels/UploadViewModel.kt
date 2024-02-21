@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.tyurin.animesnap.domain.repository.AnimeTitleRepository
 import ru.tyurin.animesnap.utils.AnimeUiState
@@ -18,7 +19,12 @@ class UploadViewModel @Inject constructor(
 ) : ViewModel() {
 
     var uiState: MutableStateFlow<AnimeUiState> = MutableStateFlow(AnimeUiState.Loading)
+    private val _isVisible = MutableStateFlow(true)
+    val isVisible: StateFlow<Boolean> = _isVisible
 
+    fun changeVisibility(value: Boolean) {
+        _isVisible.value = value
+    }
 
     fun uploadImage(imageFile: File) {
         viewModelScope.launch {

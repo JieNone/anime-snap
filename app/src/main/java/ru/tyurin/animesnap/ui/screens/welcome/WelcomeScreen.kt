@@ -1,7 +1,12 @@
 package ru.tyurin.animesnap.ui.screens.welcome
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -9,23 +14,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,49 +49,89 @@ import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
 import ru.tyurin.animesnap.ui.screens.BlankScreen
-import ru.tyurin.animesnap.ui.screens.search.PickImage
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
 import ru.tyurin.animesnap.utils.AnimeUiState.Success
 import ru.tyurin.animesnap.utils.DoubleToPercentage
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
+import java.io.File
 
 
 @Composable
 fun WelcomeScreen(
     viewModel: UploadViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     AnimeSnapTheme {
-        Surface {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-                ) {
-                    MostSimilarTo()
-                    when (uiState) {
-                        is Success -> TitlesGridScreen((uiState as Success).animeTitle)
-                        is AnimeUiState.Error -> BlankScreen()
-                        is AnimeUiState.Loading -> BlankScreen()
+        val isVisible by viewModel.isVisible.collectAsStateWithLifecycle()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val context = LocalContext.current
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    if (available.y < -1) {
+                        viewModel.changeVisibility(isVisible)
                     }
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(8.dp)
-                ) {
-                    PickImage(viewModel = viewModel, context = LocalContext.current)
+
+                    if (available.y > 1) {
+                        viewModel.changeVisibility(!isVisible)
+                    }
+
+                    return Offset.Zero
                 }
             }
         }
+        val galleryLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { uri ->
+                uri?.let { selectedUri ->
+                    val contentResolver = context.contentResolver
+                    val inputStream = contentResolver.openInputStream(selectedUri)
+                    val fileName = "image_${System.currentTimeMillis()}.jpg"
+                    val file = File(context.cacheDir, fileName)
+                    inputStream?.use { input ->
+                        file.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+
+                    Log.d("PICK_IMAGE", "Selected image: $file")
+                    viewModel.uploadImage(file)
+                }
+            }
+        )
+        Scaffold(
+            floatingActionButtonPosition = FabPosition.Center,
+            floatingActionButton = {
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = slideInVertically(initialOffsetY = { it * 2 }),
+                    exit = slideOutVertically(targetOffsetY = { it * 2 }),
+                ) {
+                    ExtendedFloatingActionButton(
+                        onClick = { galleryLauncher.launch("image/*") },
+                    ) {
+                        Text(text = stringResource(R.string.select_image))
+                    }
+                }
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .nestedScroll(nestedScrollConnection),
+            ) {
+                MostSimilarTo()
+                when (uiState) {
+                    is Success -> TitlesGridScreen((uiState as Success).animeTitle)
+                    is AnimeUiState.Error -> BlankScreen()
+                    is AnimeUiState.Loading -> BlankScreen()
+                }
+            }
+
+        }
     }
 }
-
 @Composable
 fun MostSimilarTo() {
         Text(
