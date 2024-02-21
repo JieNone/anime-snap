@@ -69,13 +69,12 @@ fun WelcomeScreen(
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (available.y < -1) {
-                        viewModel.changeVisibility(isVisible)
-                    }
-
-                    if (available.y > 1) {
                         viewModel.changeVisibility(!isVisible)
                     }
 
+                    if (available.y > 1) {
+                        viewModel.changeVisibility(isVisible)
+                    }
                     return Offset.Zero
                 }
             }
