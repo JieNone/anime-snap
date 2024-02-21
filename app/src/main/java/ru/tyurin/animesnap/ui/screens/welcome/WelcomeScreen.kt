@@ -67,7 +67,7 @@ fun WelcomeScreen(
     viewModel: UploadViewModel = hiltViewModel()
 ) {
     AnimeSnapTheme {
-//        val isVisible by viewModel.isVisible.collectAsStateWithLifecycle()
+
         val isVisible = rememberSaveable { mutableStateOf(true) }
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         val context = LocalContext.current
