@@ -1,9 +1,7 @@
 package ru.tyurin.animesnap.ui.screens.welcome
 
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -11,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,7 +39,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,8 +75,7 @@ fun WelcomeScreen(
                     if (available.y > 1) {
                         isVisible.value = true
                     }
-                    return Offset.Zero
-                }
+                    return Offset.Zero               }
             }
         }
         val galleryLauncher = rememberLauncherForActivityResult(
@@ -113,34 +110,21 @@ fun WelcomeScreen(
                     }
                 }
             }
-        ) { paddingValues ->
+        ) {paddingValues ->
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(paddingValues)
+                    .fillMaxSize()
                     .nestedScroll(nestedScrollConnection),
             ) {
                 when (uiState) {
-                    is Success -> TitlesGridScreen((uiState as Success).animeTitle)
+                    is Success -> TitlesGridScreen((uiState as Success).animeTitle, contentPadding = paddingValues)
                     is AnimeUiState.Error -> BlankScreen()
                     is AnimeUiState.Loading -> BlankScreen()
                 }
             }
-
         }
+
     }
-}
-@Composable
-fun MostSimilarTo() {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            text = stringResource(R.string.most_similar_to),
-            fontWeight = FontWeight.Black,
-            textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.titleLarge
-        )
 }
 
 @Composable
@@ -151,8 +135,7 @@ fun TitlesGridScreen(
 ) {
     LazyColumn(
         modifier = modifier
-            .padding(vertical = 4.dp)
-            .fillMaxWidth(),
+            .fillMaxSize(),
         contentPadding = contentPadding
     ) {
         items(photos.result) { result ->
@@ -214,4 +197,3 @@ private fun RenderImage(imgSrc: String) {
             .clip(shape = RoundedCornerShape(8.dp))
     )
 }
-
