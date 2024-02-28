@@ -8,20 +8,14 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,11 +43,11 @@ import ru.tyurin.animesnap.R
 import ru.tyurin.animesnap.domain.models.AnimeTitle
 import ru.tyurin.animesnap.domain.models.Result
 import ru.tyurin.animesnap.ui.screens.BlankScreen
+import ru.tyurin.animesnap.ui.screens.card.Element
 import ru.tyurin.animesnap.ui.theme.AnimeSnapTheme
 import ru.tyurin.animesnap.utils.AnimeUiState
 import ru.tyurin.animesnap.utils.AnimeUiState.Success
 import ru.tyurin.animesnap.utils.DoubleToPercentage
-import ru.tyurin.animesnap.utils.timeCodeFormatter
 import ru.tyurin.animesnap.viewmodels.UploadViewModel
 import java.io.File
 
@@ -144,34 +138,14 @@ fun TitlesGridScreen(
     }
 }
 
-@Composable
-fun Element(results: List<Result>, modifier: Modifier = Modifier) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-    ) {
-        Column(modifier = modifier.padding(16.dp)) {
-            results.forEach { result ->
-                RenderResult(result)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { /* Handle button click */ },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Add To List")
-            }
-        }
-    }
-}
+
 
 @Composable
-private fun RenderResult(result: Result) {
+fun RenderResult(result: Result) {
     result.let {
         Text(
-            text = "${it.anilist.title.english} / ${it.anilist.title.native}  Эпизод: ${it.episode}, ${timeCodeFormatter(it.from, it.to)}",
+            text = "${it.anilist.title.english} / ${it.anilist.title.native}",
+//                    "  Эпизод: ${it.episode}, ${timeCodeFormatter(it.from, it.to)}",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 16.sp,
             fontWeight = FontWeight.Black
